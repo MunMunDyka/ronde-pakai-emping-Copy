@@ -1,0 +1,27 @@
+# Virtual environment
+venv/
+ENV/
+env/
+.venv/
+
+# Python bytecode
+__pycache__/
+*.py[cod]
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+
+# Logs
+*.log
+
+# Static audio files (TTS output)
+static/*.mp3
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# VSCode
+.vscode/
