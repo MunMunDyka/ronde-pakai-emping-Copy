@@ -1,201 +1,151 @@
-# Rondee FastAPI
+# 🇮🇩 Rondee FastAPI
 
+**Rondee FastAPI** adalah REST API berbasis Python FastAPI yang dapat mengenali objek budaya dari Pulau Penyengat melalui gambar yang diunggah oleh pengguna, lalu memberikan deskripsi dan audio (TTS) otomatis.
 
-## 🇮🇩 Rondee FastAPI - API Pengenalan Objek Budaya Pulau Penyengat
-
-**Rondee FastAPI** adalah backend API berbasis FastAPI untuk mengenali objek budaya di Pulau Penyengat dari gambar yang diunggah. Menggunakan deep learning (CNN dengan MobileNetV2), API ini memberikan hasil klasifikasi gambar, informasi budaya, dan audio deskripsi secara otomatis.
-
-🔗 **Demo API**: [https://ronde-pakai-emping.onrender.com](https://ronde-pakai-emping.onrender.com)
+🔗 Demo API: `https://ronde-pakai-emping.onrender.com`
 
 ---
 
-### 🎯 Kegunaan
+## 🌟 Fitur
 
-Digunakan oleh aplikasi mobile/web untuk:
-
-* Mengenali landmark budaya dari gambar.
-* Memberikan informasi deskriptif: sejarah, lokasi, arsitektur.
-* Menyediakan audio deskripsi otomatis (TTS).
+* 🔍 **Klasifikasi gambar landmark budaya** dari Pulau Penyengat
+* 📜 Menampilkan **deskripsi, lokasi, sejarah, dan arsitektur**
+* 🔊 Menyediakan **audio deskripsi** menggunakan TTS (`gTTS`)
+* 🧠 Menggunakan **model deep learning (.h5, MobileNet)**
 
 ---
 
-### 📦 Endpoint API
+## 📦 Struktur Folder
 
-* `POST /predict` → Kirim gambar dan terima informasi lengkap tentang landmark.
-* `GET /` → Healthcheck (cek status API).
+```
+RONDEE-ANGET/
+├── app.py                   # FastAPI backend
+├── models/                  # Trained model & label metadata
+│   ├── rondee-model-terbaru.h5
+│   └── labels.json
+├── static/                  # Audio hasil TTS (auto-generated)
+├── requirements.txt         # Dependency Python
+├── Dockerfile               # Deploy config (Render-ready)
+└── README.md                # Dokumentasi ini
+```
 
-Contoh response JSON:
+---
+
+## 🚀 Cara Menjalankan Lokal
+
+### 1. Install dependensi
+
+```bash
+pip install -r requirements.txt
+```
+
+### 2. Jalankan server
+
+```bash
+uvicorn app:app --reload
+```
+
+Buka [http://localhost:8000/docs](http://localhost:8000/docs) untuk Swagger UI.
+
+---
+
+## 📬 API Documentation
+
+### ♻️ `GET /`
+
+Cek apakah API sedang aktif.
+
+#### Contoh Response:
+
+```json
+{
+  "message": "Rondee FastAPI is running!"
+}
+```
+
+---
+
+### 🖼️ `POST /predict`
+
+Upload gambar dan dapatkan hasil klasifikasi.
+
+#### 📥 Request
+
+* **Method:** `POST`
+* **Content-Type:** `multipart/form-data`
+* **Body:** 1 file gambar (`file`)
+
+#### ✅ Contoh cURL
+
+```bash
+curl -X POST "https://ronde-pakai-emping.onrender.com/predict" \
+ -H "accept: application/json" \
+ -H "Content-Type: multipart/form-data" \
+ -F "file=@masjid.jpg;type=image/jpeg"
+```
+
+#### 📤 Response JSON:
 
 ```json
 {
   "label": "Masjid Raya Sultan Riau",
-  "confidence": "98.76%",
-  "description": "...",
-  "location": "...",
+  "confidence": "97.12%",
+  "description": "Masjid yang dibangun oleh Sultan Riau...",
+  "location": "Pulau Penyengat, Riau",
   "history": "...",
   "architecture": "...",
-  "audio_url": "/static/tts_XXXXX.mp3",
+  "audio_url": "/static/tts_masjid-raya-sultan-riau_1715677890.mp3",
   "note": "✅ Gambar dikenali dengan baik."
 }
 ```
 
 ---
 
-### 🛠 Cara Pakai
+## ⚙️ Teknologi yang Digunakan
 
-1. **Jalankan Lokal** (butuh Python, pip, dan model):
-
-```bash
-uvicorn app:app --reload
-```
-
-2. **Upload Gambar** melalui:
-
-   * Swagger UI: `http://localhost:5000/docs`
-   * Atau gunakan `curl`:
-
-```bash
-curl -X POST "https://ronde-pakai-emping.onrender.com/predict" \
- -H "accept: application/json" \
- -H "Content-Type: multipart/form-data" \
- -F "file=@namafile.jpg;type=image/jpeg"
-```
-
-3. **Mainkan Audio** dari field `audio_url` yang diberikan dalam response.
+* FastAPI
+* TensorFlow / Keras
+* Pillow
+* NumPy
+* gTTS
+* Uvicorn
+* Docker (untuk deploy ke Render)
 
 ---
 
-### ⚙️ Struktur Proyek & Model
+## 📦 Deployment ke Render (Opsional)
 
-```
-📁 models/
- ├── rondee-model-terbaru.h5      # Trained model
- └── labels.json                   # Metadata info setiap kelas
+1. Buat akun di [https://render.com](https://render.com)
+2. Buat Web Service baru dari repo GitHub kamu
+3. Pastikan file berikut ada:
 
-📁 static/                         # Folder hasil audio TTS (otomatis dibuat)
-📄 app.py                          # Source code utama FastAPI
-📄 Dockerfile                      # Konfigurasi container Docker
-📄 requirements.txt                # Daftar dependency Python
-```
+   * `app.py`
+   * `requirements.txt`
+   * `Dockerfile`
 
 ---
 
-### 🧪 Testing
+## 👨‍💼 Developer
 
-* Swagger Docs: buka `/docs`
-* Gunakan Postman untuk `POST /predict`
-* Minimal gambar ukuran 224x224 JPG/PNG.
-
----
-
-### 🐳 Jalankan dengan Docker
-
-```bash
-docker build -t rondee-fastapi .
-docker run -p 5000:5000 rondee-fastapi
-```
+> Developed by Vinsen, Aichan, dan Nuswapada
+> Untuk project AI Cultural Landmark Recognition – Pulau Penyengat, Batam 2025
 
 ---
 
-### ⚠️ Kendala Diketahui
+## 🧠 Catatan
 
-* `gTTS` tidak selalu bekerja di hosting gratis seperti Render (karena pembatasan akses internet / codec).
-* Model akan sulit mengenali gambar buram, gelap, atau dari sudut yang ekstrem.
-
----
-
-## 🌍 Rondee FastAPI (English)
-
-**Rondee FastAPI** is a lightweight API service that performs cultural landmark recognition from image uploads, using a CNN-based deep learning model trained on real cultural data from Pulau Penyengat.
-
-🔗 **Demo**: [https://ronde-pakai-emping.onrender.com](https://ronde-pakai-emping.onrender.com)
+* Model hanya mengenali landmark budaya dari 7 kelas yang sudah dilatih.
+* Audio TTS dihasilkan secara realtime (background task) dan otomatis disimpan di folder `/static`.
+* Model `.h5` sebaiknya dioptimasi jika ingin digunakan di hosting production dengan resource terbatas.
 
 ---
 
-### 🎯 Purpose
+## 📸 Contoh Gambar yang Didukung
 
-This API is useful for:
-
-* Detecting cultural heritage objects via uploaded images.
-* Delivering detailed metadata: description, location, history, architecture.
-* Serving automatic spoken description via TTS (Text-to-Speech).
-
----
-
-### 📦 API Endpoints
-
-* `POST /predict` → Submit image, receive label + info + audio.
-* `GET /` → Status check.
-
-Example response:
-
-```json
-{
-  "label": "Masjid Raya Sultan Riau",
-  "confidence": "98.76%",
-  "description": "...",
-  "location": "...",
-  "history": "...",
-  "architecture": "...",
-  "audio_url": "/static/tts_XXXXX.mp3",
-  "note": "✅ Image recognized with high confidence."
-}
-```
-
----
-
-### 🛠 How to Use
-
-1. **Run locally**:
-
-```bash
-uvicorn app:app --reload
-```
-
-2. **Test API** via:
-
-   * Swagger UI: `/docs`
-   * cURL:
-
-```bash
-curl -X POST "https://ronde-pakai-emping.onrender.com/predict" \
- -H "accept: application/json" \
- -H "Content-Type: multipart/form-data" \
- -F "file=@yourimage.jpg;type=image/jpeg"
-```
-
-3. **Play audio** from `audio_url` field.
-
----
-
-### ⚙️ Project Structure
-
-```
-📁 models/        → trained .h5 model and labels.json
-📁 static/        → generated MP3 audio files
-📄 app.py         → FastAPI backend code
-📄 Dockerfile     → container config
-📄 requirements.txt → pip dependencies
-```
-
----
-
-### 🐳 Docker Support
-
-```bash
-docker build -t rondee-fastapi .
-docker run -p 5000:5000 rondee-fastapi
-```
-
----
-
-### ⚠️ Known Issues
-
-* gTTS audio may fail on serverless platforms without outbound internet access.
-* Model accuracy drops significantly on blurry or poorly lit photos.
-
----
-
-### 👩‍💻 Developed by
-
-**Vinsen**, **Aichan**, and **Nuswapada** 💜
+* Masjid Raya Sultan Riau
+* Balai Adat Melayu
+* Gedung Tabib
+* Bukit Kursi Meriam
+* Rumah Hakim Raja Ali Haji
+* Makam Engku Putri
+* Makam Raja Ali Haji
